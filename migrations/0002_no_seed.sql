@@ -1,0 +1,2 @@
+-- No seed data. Local database starts empty.
+-- Use real GitHub OAuth + Sync GitHub for local debugging.

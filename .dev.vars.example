@@ -1,0 +1,7 @@
+GITHUB_CLIENT_ID=your_github_oauth_app_client_id
+GITHUB_CLIENT_SECRET=your_github_oauth_app_client_secret
+ENCRYPTION_SECRET=change-me-long-random-secret
+APP_ORIGIN=http://127.0.0.1:8788
+
+# Optional: local-only login without OAuth App. Generate via `gh auth token` or GitHub PAT.
+DEV_GITHUB_TOKEN=

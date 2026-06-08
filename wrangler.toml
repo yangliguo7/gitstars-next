@@ -1,0 +1,13 @@
+name = "gitstars-next"
+compatibility_date = "2026-05-28"
+pages_build_output_dir = "dist"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "gitstars"
+database_id = "22e5abba-a1c2-47d9-90ce-234419ae92f6"
+migrations_dir = "migrations"
+
+[[kv_namespaces]]
+binding = "CACHE"
+id = "af81c1602fe54b259493fd878407d816"

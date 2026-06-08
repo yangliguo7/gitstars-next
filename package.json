@@ -1,0 +1,31 @@
+{
+  "name": "gitstars-next",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "test": "vitest run --environment jsdom",
+    "typecheck": "vue-tsc --noEmit",
+    "verify:api": "node scripts/verify-api.mjs",
+    "smoke:ui": "node scripts/smoke-ui.mjs"
+  },
+  "dependencies": {
+    "@vitejs/plugin-vue": "latest",
+    "vite": "latest",
+    "typescript": "latest",
+    "vue": "latest",
+    "vue-router": "latest",
+    "pinia": "latest"
+  },
+  "devDependencies": {
+    "vue-tsc": "latest",
+    "vitest": "latest",
+    "@vue/test-utils": "latest",
+    "jsdom": "latest",
+    "@cloudflare/workers-types": "latest",
+    "wrangler": "latest"
+  }
+}
