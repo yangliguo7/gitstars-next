@@ -285,7 +285,9 @@ pnpm build
 
 ## 6. Cloudflare deployment
 
-Recommended path: ask an AI agent to read the deployment runbook and deploy the project to Cloudflare.
+Recommended path only: **fork this repository, then connect your own GitHub repository to Cloudflare Pages for automatic deployments**.
+
+Do not use `wrangler pages deploy dist` as the production deployment path. That creates a Direct Upload project, which cannot be converted in place to a GitHub-connected Pages project later.
 
 Runbook:
 
@@ -293,33 +295,77 @@ Runbook:
 DEPLOYMENT.md
 ```
 
-Prompt to give the agent:
+Prompt for an AI agent:
 
 ```text
-Read DEPLOYMENT.md and deploy this project to Cloudflare.
+Read DEPLOYMENT.md and deploy my forked repository to Cloudflare Pages using GitHub-connected automatic deployment.
 ```
 
-Usually you only need to prepare:
+Recommended flow:
+
+```mermaid
+flowchart LR
+  A[Fork this repo] --> B[Cloudflare Pages connects GitHub repo]
+  B --> C[pnpm build / dist]
+  C --> D[Bind D1 + KV]
+  D --> E[Set Pages secrets]
+  E --> F[Bind custom domain]
+  F --> G[Update GitHub OAuth App URLs]
+  G --> H[push main auto-deploys]
+```
+
+Usually you only need:
+
+```text
+GitHub account
+Cloudflare account
+GitHub OAuth App Client ID
+GitHub OAuth App Client Secret
+```
+
+Cloudflare Pages build settings:
+
+```text
+Framework preset: None
+Production branch: main
+Build command: pnpm build
+Build output directory: dist
+Root directory: empty
+```
+
+Pages secrets:
 
 ```text
 GITHUB_CLIENT_ID
 GITHUB_CLIENT_SECRET
+ENCRYPTION_SECRET
+APP_ORIGIN
 ```
 
-Prefer not to paste secrets into chat. Let the agent stop at the Pages secrets step and give you `wrangler pages secret put ...` commands; enter secret values locally in your terminal.
+Security recommendation: do not paste secrets into chat. Let the agent stop at the secrets step and give you:
 
-The agent derives the production origin from Cloudflare Pages:
-
-```text
-Use an active custom domain first, for example https://gitstars.<your-domain>
-Fallback to https://gitstars-next.pages.dev
+```bash
+pnpm wrangler pages secret put GITHUB_CLIENT_ID --project-name <pages-project>
+pnpm wrangler pages secret put GITHUB_CLIENT_SECRET --project-name <pages-project>
+pnpm wrangler pages secret put ENCRYPTION_SECRET --project-name <pages-project>
+pnpm wrangler pages secret put APP_ORIGIN --project-name <pages-project>
 ```
 
-Subpath deployment is not supported:
+Enter values locally in your terminal.
+
+Production origin rules:
 
 ```text
-Wrong: https://<your-domain>/gitstars-next
-Correct: https://gitstars.<your-domain>
+Recommended: https://gitstars.<your-domain>
+Default: https://<pages-project>.pages.dev
+Unsupported: https://<your-domain>/gitstars-next
+```
+
+GitHub OAuth App URLs:
+
+```text
+Homepage URL: <APP_ORIGIN>
+Authorization callback URL: <APP_ORIGIN>/api/auth/github/callback
 ```
 
 Use `DEPLOYMENT.md` as the source of truth for deployment details.

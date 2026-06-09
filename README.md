@@ -306,7 +306,9 @@ pnpm build
 
 ## 7. Cloudflare 部署
 
-只推荐一种方式：让 AI agent 读取部署手册，然后按手册自动部署到 Cloudflare。
+只推荐一种方式：**Fork 本仓库，然后在 Cloudflare Pages 关联自己的 GitHub 仓库自动部署**。
+
+不要把生产部署做成 `wrangler pages deploy dist` 的 Direct Upload 项目。Direct Upload 不能原地改成 GitHub 自动部署项目，后续迁移麻烦。
 
 部署手册：
 
@@ -314,50 +316,80 @@ pnpm build
 DEPLOYMENT.md
 ```
 
-你只需要对 AI 说：
+给 AI agent 的一句话：
 
 ```text
-请读取 DEPLOYMENT.md，按文档把这个项目部署到 Cloudflare。
+请读取 DEPLOYMENT.md，按 GitHub 关联自动部署方式，把我 fork 后的仓库部署到 Cloudflare Pages。
 ```
 
-AI 会按手册处理：
+推荐流程：
+
+```mermaid
+flowchart LR
+  A[Fork 本仓库] --> B[Cloudflare Pages 选择 GitHub 仓库]
+  B --> C[pnpm build / dist]
+  C --> D[绑定 D1 + KV]
+  D --> E[设置 Pages secrets]
+  E --> F[绑定自定义域名]
+  F --> G[GitHub OAuth App 更新 URL]
+  G --> H[push main 自动部署]
+```
+
+用户通常只需要准备：
 
 ```text
-- 检查本地项目
-- 检查 Cloudflare 登录状态
-- 创建或复用 Pages / D1 / KV
-- 写入 wrangler.toml 绑定
-- 设置 Pages secrets
-- 执行 D1 migrations
-- 部署 Pages
-- 验证静态页面、API、数据库
-- 输出 GitHub OAuth 需要填写的 Homepage URL 和 callback URL
+GitHub 账号
+Cloudflare 账号
+GitHub OAuth App Client ID
+GitHub OAuth App Client Secret
 ```
 
-你通常只需要准备：
+Cloudflare Pages 构建配置：
+
+```text
+Framework preset: None
+Production branch: main
+Build command: pnpm build
+Build output directory: dist
+Root directory: 留空
+```
+
+Pages secrets：
 
 ```text
 GITHUB_CLIENT_ID
 GITHUB_CLIENT_SECRET
+ENCRYPTION_SECRET
+APP_ORIGIN
 ```
 
-推荐不要把 secret 发在聊天里。更安全的方式是：AI 走到 secrets 步骤时，给你 `wrangler pages secret put ...` 命令，你在本机终端里手动粘贴 secret。
+安全建议：不要把 secret 发在聊天里。AI 到 secrets 步骤时给出：
 
-生产域名由 AI 从 Cloudflare Pages 推导：
+```bash
+pnpm wrangler pages secret put GITHUB_CLIENT_ID --project-name <pages-project>
+pnpm wrangler pages secret put GITHUB_CLIENT_SECRET --project-name <pages-project>
+pnpm wrangler pages secret put ENCRYPTION_SECRET --project-name <pages-project>
+pnpm wrangler pages secret put APP_ORIGIN --project-name <pages-project>
+```
+
+你在本机终端交互输入值。
+
+生产域名规则：
 
 ```text
-优先使用已绑定的自定义域名，例如 https://gitstars.<your-domain>
-没有自定义域名则使用 https://gitstars-next.pages.dev
+推荐：https://gitstars.<your-domain>
+默认：https://<pages-project>.pages.dev
+不支持：https://<your-domain>/gitstars-next
 ```
 
-不支持子路径部署：
+GitHub OAuth App URL：
 
 ```text
-错误：https://<your-domain>/gitstars-next
-正确：https://gitstars.<your-domain>
+Homepage URL: <APP_ORIGIN>
+Authorization callback URL: <APP_ORIGIN>/api/auth/github/callback
 ```
 
-细节不要看 README，以 `DEPLOYMENT.md` 为准。
+细节以 `DEPLOYMENT.md` 为准。
 
 ---
 
