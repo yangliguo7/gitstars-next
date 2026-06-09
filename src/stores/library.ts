@@ -470,9 +470,11 @@ export const useLibraryStore = defineStore('library', () => {
 
       await loadFromApi()
       if (settings.value.hasApiKey && missingSummaryCount.value > 0) await generateMissingSummaries()
-      syncLabel.value = 'Auto grouping'
-      await autoAssignGroups()
-      await loadFromApi()
+      if (groups.value.length > 0) {
+        syncLabel.value = 'Auto grouping'
+        await autoAssignGroups()
+        await loadFromApi()
+      }
     } catch (error) {
       loadError.value = error instanceof Error ? error.message : 'sync failed'
     } finally {

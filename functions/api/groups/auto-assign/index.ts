@@ -20,6 +20,7 @@ export const onRequestPost: PagesFunction = async ({ request, env }) => {
     readModelSettings(env as { DB?: D1Database }, user.id),
   ])
   const repos = repoResult.items.filter((repo) => repo.groups.length === 0)
+  if (!existingGroups.length) return ok({ assigned_count: 0, created_groups: [], considered_count: repos.length })
   if (!repos.length) return ok({ assigned_count: 0, created_groups: [], considered_count: 0 })
 
   const apiKey = model?.enabled && model?.api_key_encrypted && model?.iv && (env as Env).ENCRYPTION_SECRET
