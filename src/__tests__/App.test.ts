@@ -4,11 +4,11 @@ import { createPinia } from 'pinia'
 import App from '../App.vue'
 
 describe('App', () => {
-  it('renders GitStars empty real-data shell', () => {
+  it('renders GitStars loading real-data shell', () => {
     const wrapper = mount(App, { global: { plugins: [createPinia()] } })
     expect(wrapper.text()).toContain('GitStars')
     expect(wrapper.text()).toContain('Connect GitHub to start.')
-    expect(wrapper.text()).toContain('没有本地示例数据')
+    expect(wrapper.text()).toContain('正在加载 Star Library')
     expect(wrapper.text()).toContain('Connect GitHub')
   })
 

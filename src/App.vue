@@ -37,6 +37,7 @@ const {
   loggedIn,
   userLogin,
   loadError,
+  initialLoading,
   filteredRepos,
   activeRepo,
   missingSummaryCount,
@@ -380,38 +381,59 @@ onBeforeUnmount(() => {
           </div>
 
           <div class="items" aria-live="polite">
-            <article
-              v-for="repo in filteredRepos"
-              :key="repo.id"
-              class="repo-card"
-              :class="{ active: activeRepo?.id === repo.id }"
-              @click="store.selectRepo(repo.id)"
-              @contextmenu.prevent.stop="openRepoMenu($event, repo)"
-            >
-              <div class="rank" aria-hidden="true">{{ repoInitial(repo) }}</div>
-              <div class="repo-main">
-                <div class="repo-title">
-                  <b>{{ repo.owner }}/{{ repo.name }}</b>
-                </div>
-                <p class="summary">{{ repo.userSummary || repo.aiSummary || repo.description || '暂无摘要' }}</p>
-                <div class="tags">
-                  <span v-if="repo.language !== 'Unknown'" class="mini">Lang · {{ repo.language }}</span>
-                  <span v-for="groupId in repo.groups" :key="groupId" class="mini">Group · {{ groupName(groupId) }}</span>
-                  <span v-if="repo.groups.length === 0" class="mini warn">未分组</span>
-                </div>
+            <div v-if="initialLoading" class="loading-state" role="status" aria-live="polite">
+              <div class="loading-copy">
+                <b>正在加载 Star Library</b>
+                <span>连接 GitHub 会话、读取 D1 仓库、分组和摘要数据…</span>
               </div>
-              <div class="score">
-                <b>★ {{ formatStars(repo.stars) }}</b>
+              <div v-for="item in 6" :key="item" class="repo-card skeleton-card" aria-hidden="true">
+                <div class="rank skeleton-block" />
+                <div class="repo-main">
+                  <div class="skeleton-line title" />
+                  <div class="skeleton-line" />
+                  <div class="tags">
+                    <span class="mini skeleton-tag" />
+                    <span class="mini skeleton-tag short" />
+                  </div>
+                </div>
+                <div class="score"><span class="skeleton-line score-line" /></div>
               </div>
-            </article>
-
-            <div v-if="filteredRepos.length === 0" class="empty">
-              <b>{{ emptyTitle }}</b>
-              <div>{{ loggedIn ? '当前没有数据。点击 Sync GitHub 同步真实 Star。' : '没有本地示例数据。请连接 GitHub 后同步你的真实 Star。' }}</div>
-              <button v-if="!loggedIn" type="button" @click="store.loginWithGitHub()">Connect GitHub</button>
-              <button v-else type="button" @click="store.syncGitHub()">Sync GitHub</button>
-              <button type="button" @click="store.clearQuery()">Clear search</button>
             </div>
+
+            <template v-else>
+              <article
+                v-for="repo in filteredRepos"
+                :key="repo.id"
+                class="repo-card"
+                :class="{ active: activeRepo?.id === repo.id }"
+                @click="store.selectRepo(repo.id)"
+                @contextmenu.prevent.stop="openRepoMenu($event, repo)"
+              >
+                <div class="rank" aria-hidden="true">{{ repoInitial(repo) }}</div>
+                <div class="repo-main">
+                  <div class="repo-title">
+                    <b>{{ repo.owner }}/{{ repo.name }}</b>
+                  </div>
+                  <p class="summary">{{ repo.userSummary || repo.aiSummary || repo.description || '暂无摘要' }}</p>
+                  <div class="tags">
+                    <span v-if="repo.language !== 'Unknown'" class="mini">Lang · {{ repo.language }}</span>
+                    <span v-for="groupId in repo.groups" :key="groupId" class="mini">Group · {{ groupName(groupId) }}</span>
+                    <span v-if="repo.groups.length === 0" class="mini warn">未分组</span>
+                  </div>
+                </div>
+                <div class="score">
+                  <b>★ {{ formatStars(repo.stars) }}</b>
+                </div>
+              </article>
+
+              <div v-if="filteredRepos.length === 0" class="empty">
+                <b>{{ emptyTitle }}</b>
+                <div>{{ loggedIn ? '当前没有数据。点击 Sync GitHub 同步真实 Star。' : '没有本地示例数据。请连接 GitHub 后同步你的真实 Star。' }}</div>
+                <button v-if="!loggedIn" type="button" @click="store.loginWithGitHub()">Connect GitHub</button>
+                <button v-else type="button" @click="store.syncGitHub()">Sync GitHub</button>
+                <button type="button" @click="store.clearQuery()">Clear search</button>
+              </div>
+            </template>
           </div>
         </section>
 

@@ -221,6 +221,34 @@ button:disabled { cursor: not-allowed; opacity: 0.72; }
   background: color-mix(in srgb, var(--blue) 8%, var(--panel));
 }
 .up { color: var(--green); }
+.loading-state { display: grid; gap: 10px; }
+.loading-copy {
+  padding: 18px 20px;
+  margin-bottom: 2px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--muted);
+}
+.loading-copy b { display: block; color: var(--ink); font-size: 15px; margin-bottom: 6px; }
+.loading-copy span { font-size: 13px; }
+.skeleton-card { pointer-events: none; cursor: default; }
+.skeleton-block, .skeleton-line, .skeleton-tag {
+  display: block;
+  border-color: transparent;
+  color: transparent;
+  background: linear-gradient(90deg, var(--soft), color-mix(in srgb, var(--blue) 10%, var(--panel)), var(--soft));
+  background-size: 220% 100%;
+  animation: skeleton-pulse 1.2s ease-in-out infinite;
+}
+.skeleton-line { width: 72%; height: 12px; margin-top: 10px; }
+.skeleton-line.title { width: 42%; height: 16px; margin-top: 3px; }
+.skeleton-tag { width: 88px; height: 22px; padding: 0; }
+.skeleton-tag.short { width: 64px; }
+.score-line { width: 42px; height: 14px; margin-top: 0; }
+@keyframes skeleton-pulse {
+  0% { background-position: 120% 0; }
+  100% { background-position: -120% 0; }
+}
 .empty { padding: 34px; text-align: left; color: var(--muted); border: 1px dashed var(--line); background: var(--panel); margin: 12px; }
 .empty b { display: block; color: var(--ink); font-size: 15px; margin-bottom: 8px; }
 .empty button { margin: 10px 8px 0 0; height: 32px; padding: 0 10px; border: 1px solid var(--line); background: var(--soft); font-weight: 800; color: var(--muted); }

@@ -29,6 +29,7 @@ export const useLibraryStore = defineStore('library', () => {
   const userLogin = ref('Not signed in')
   const userAvatar = ref('')
   const loadError = ref('')
+  const initialLoading = ref(true)
   const query = ref('')
   const filter = ref<ViewFilter>('all')
   const activeGroupId = ref<string>('')
@@ -540,6 +541,8 @@ export const useLibraryStore = defineStore('library', () => {
       apiConnected.value = false
       loggedIn.value = false
       loadError.value = error instanceof Error ? error.message : 'api unavailable'
+    } finally {
+      initialLoading.value = false
     }
   }
 
@@ -550,7 +553,7 @@ export const useLibraryStore = defineStore('library', () => {
   return {
     repos, groups, query, filter, activeGroupId, activeRepoId, commandOpen, settingsOpen, settingsPanel, avatarOpen, theme, toast, confirmDialog,
     syncing, syncLabel, newGroupName, starInput, modelDraft, defaultGroupSuggestions, selectedDefaultGroups, repoGroupSuggestions, groupSuggesting, groupAccepting, groupSuggestionStatus, apiConnected, loggedIn,
-    userLogin, userAvatar, loadError, syncProgress, summaryGenerating, summaryProgress, summaryLabel, modelTesting, modelTestStatus, settings, orderedRepos, filteredRepos, activeRepo, missingSummaryCount, counts, groupCounts,
+    userLogin, userAvatar, loadError, initialLoading, syncProgress, summaryGenerating, summaryProgress, summaryLabel, modelTesting, modelTestStatus, settings, orderedRepos, filteredRepos, activeRepo, missingSummaryCount, counts, groupCounts,
     modeTitle, notify, askConfirm, answerConfirm, selectFilter, selectGroup, selectRepo, setQuery, clearQuery, openSettings, toggleTheme, updateSummary, toggleGroup, setRepoGroups,
     runCommand, loadDefaultGroupSuggestions, loadRepoGroupSuggestions, toggleDefaultGroupSelection, selectAllDefaultGroups, clearDefaultGroupSelection, acceptSuggestedGroup, acceptSelectedDefaultGroups, smartGroupUngrouped, addGroup, editGroupName, removeGroup,
     starPublicRepo, toggleStar, generateActiveSummary, generateMissingSummaries, saveModelDraft, testModelDraft, syncGitHub, loadFromApi, loginWithGitHub,

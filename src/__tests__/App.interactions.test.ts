@@ -8,7 +8,7 @@ describe('App interactions', () => {
     const wrapper = mount(App, { global: { plugins: [createPinia()] } })
     await wrapper.findAll('.navitem').find((button) => button.text().includes('Ungrouped'))?.trigger('click')
     expect(wrapper.text()).toContain('Connect GitHub to start.')
-    expect(wrapper.findAll('.repo-card').length).toBe(0)
+    expect(wrapper.findAll('.repo-card').filter((card) => !card.classes().includes('skeleton-card')).length).toBe(0)
   })
 
   it('supports command palette dark mode command', async () => {
